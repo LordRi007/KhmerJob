@@ -7,13 +7,17 @@ from app import models  # noqa: F401
 
 target_metadata = Base.metadata
 
+db_url = get_settings().database_url
+if db_url.startswith('postgres://'):
+    db_url = db_url.replace('postgres://', 'postgresql://', 1)
+
 if context.is_offline_mode():
-    context.configure(url=get_settings().database_url, target_metadata=target_metadata,
+    context.configure(url=db_url, target_metadata=target_metadata,
                       literal_binds=True, dialect_opts={'paramstyle': 'named'})
     with context.begin_transaction():
         context.run_migrations()
 else:
-    engine = create_engine(get_settings().database_url, poolclass=pool.NullPool)
+    engine = create_engine(db_url, poolclass=pool.NullPool)
     with engine.connect() as connection:
         context.configure(connection=connection, target_metadata=target_metadata)
         with context.begin_transaction():

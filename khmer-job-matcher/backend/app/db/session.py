@@ -13,6 +13,8 @@ class Base(DeclarativeBase):
 @lru_cache
 def get_engine():
     url = get_settings().database_url
+    if url.startswith('postgres://'):
+        url = url.replace('postgres://', 'postgresql://', 1)
     connect_args = {'check_same_thread': False} if url.startswith('sqlite') else {}
     return create_engine(url, pool_pre_ping=True, connect_args=connect_args)
 
