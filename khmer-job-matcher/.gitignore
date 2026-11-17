@@ -11,3 +11,6 @@ uploads/
 playwright-report/
 test-results/
 .local_models/
+*.db
+*.sqlite
+*.sqlite3
